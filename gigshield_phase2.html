@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>GigShield AI — Phase 2 | Guidewire DEVTrails 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --bg2: #0f1520;
+    --bg3: #151c2e;
+    --card: #111827;
+    --border: #1e2d45;
+    --border2: #243350;
+    --accent: #f59e0b;
+    --accent2: #3b82f6;
+    --accent3: #10b981;
+    --danger: #ef4444;
+    --warn: #f97316;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #475569;
+    --phase2: #f59e0b;
+    --glow: rgba(245,158,11,0.15);
+    --glow2: rgba(59,130,246,0.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+  
+  /* ─── TOPBAR ─── */
+  #topbar{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 24px;height:56px;
+    background:rgba(10,14,23,0.92);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);
+  }
+  .topbar-left{display:flex;align-items:center;gap:12px}
+  .logo-mark{
+    width:32px;height:32px;border-radius:8px;
+    background:linear-gradient(135deg,var(--accent),#d97706);
+    display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#000;
+  }
+  .logo-text{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;letter-spacing:-0.3px}
+  .logo-text span{color:var(--accent)}
+  .phase-badge{
+    background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(245,158,11,0.08));
+    border:1px solid rgba(245,158,11,0.35);
+    color:var(--accent);font-family:'DM Mono',monospace;font-size:10px;font-weight:500;
+    padding:3px 8px;border-radius:4px;letter-spacing:1px;text-transform:uppercase;
+  }
+  .topbar-right{display:flex;align-items:center;gap:10px}
+  #live-location-pill{
+    display:flex;align-items:center;gap:6px;
+    background:var(--bg3);border:1px solid var(--border2);
+    padding:4px 10px;border-radius:20px;font-size:12px;color:var(--text2);
+    cursor:pointer;transition:border-color .2s;
+  }
+  #live-location-pill:hover{border-color:var(--accent2)}
+  .loc-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);flex-shrink:0}
+  .loc-dot.active{background:var(--accent3);box-shadow:0 0 6px var(--accent3)}
+  .loc-dot.loading{background:var(--accent);animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  #user-pill{
+    display:flex;align-items:center;gap:6px;
+    background:var(--bg3);border:1px solid var(--border2);
+    padding:4px 10px;border-radius:20px;font-size:12px;color:var(--text2);
+  }
+  #logout-btn{
+    background:transparent;border:1px solid var(--border2);
+    color:var(--text3);font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;
+    transition:all .2s;font-family:'DM Mono',monospace;
+  }
+  #logout-btn:hover{border-color:var(--danger);color:var(--danger)}
+
+  /* ─── MAIN LAYOUT ─── */
+  #app{padding-top:56px;min-height:100vh}
+  
+  /* ─── SECTION SYSTEM ─── */
+  .section{display:none;min-height:calc(100vh - 56px);padding:32px 24px}
+  .section.active{display:block}
+  
+  /* ─── NAV TABS ─── */
+  #nav{
+    display:flex;gap:4px;padding:16px 24px 0;background:var(--bg);
+    border-bottom:1px solid var(--border);position:sticky;top:56px;z-index:90;
+  }
+  .nav-tab{
+    padding:8px 16px;border-radius:8px 8px 0 0;font-size:13px;font-weight:500;
+    color:var(--text3);cursor:pointer;transition:all .2s;border:1px solid transparent;
+    border-bottom:none;background:transparent;font-family:'DM Sans',sans-serif;
+  }
+  .nav-tab:hover{color:var(--text2);background:var(--bg3)}
+  .nav-tab.active{color:var(--text);background:var(--card);border-color:var(--border);color:var(--accent)}
+  .tab-icon{margin-right:6px;font-size:14px}
+
+  /* ─── CARDS ─── */
+  .card{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:12px;padding:20px;margin-bottom:16px;
+  }
+  .card-title{
+    font-family:'Syne',sans-serif;font-size:13px;font-weight:600;
+    color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .card-title .dot{width:4px;height:4px;border-radius:50%;background:var(--accent);display:inline-block}
+
+  /* ─── STAT TILES ─── */
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+  .stat-tile{
+    background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;
+    position:relative;overflow:hidden;
+  }
+  .stat-tile::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,transparent,var(--accent-color,var(--accent)),transparent);
+  }
+  .stat-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--text);line-height:1}
+  .stat-lbl{font-size:11px;color:var(--text3);margin-top:4px;font-family:'DM Mono',monospace;letter-spacing:.5px;text-transform:uppercase}
+  .stat-sub{font-size:11px;color:var(--accent3);margin-top:6px}
+
+  /* ─── FORM ELEMENTS ─── */
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form-grid.single{grid-template-columns:1fr}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;letter-spacing:.5px;text-transform:uppercase}
+  .field input,.field select,.field textarea{
+    background:var(--bg2);border:1px solid var(--border2);
+    color:var(--text);padding:10px 12px;border-radius:8px;font-size:14px;
+    font-family:'DM Sans',sans-serif;transition:border-color .2s;outline:none;
+    -webkit-appearance:none;
+  }
+  .field input:focus,.field select:focus{border-color:var(--accent2);box-shadow:0 0 0 3px var(--glow2)}
+  .field select option{background:var(--bg2)}
+  
+  /* ─── BUTTONS ─── */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;
+    cursor:pointer;border:none;transition:all .2s;font-family:'DM Sans',sans-serif;
+  }
+  .btn-primary{background:var(--accent);color:#000}
+  .btn-primary:hover{background:#d97706;transform:translateY(-1px)}
+  .btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border2)}
+  .btn-secondary:hover{border-color:var(--accent2)}
+  .btn-danger{background:rgba(239,68,68,.15);color:var(--danger);border:1px solid rgba(239,68,68,.3)}
+  .btn-danger:hover{background:rgba(239,68,68,.25)}
+  .btn-success{background:rgba(16,185,129,.15);color:var(--accent3);border:1px solid rgba(16,185,129,.3)}
+  .btn-full{width:100%}
+  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+  .btn-sm{padding:6px 12px;font-size:12px}
+
+  /* ─── ALERTS ─── */
+  .alert{
+    padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:12px;
+    display:flex;align-items:flex-start;gap:10px;
+  }
+  .alert-ok{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+  .alert-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
+  .alert-warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+  .alert-info{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);color:#93c5fd}
+  
+  /* ─── BADGES ─── */
+  .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.5px}
+  .badge-green{background:rgba(16,185,129,.15);color:var(--accent3);border:1px solid rgba(16,185,129,.25)}
+  .badge-yellow{background:rgba(245,158,11,.15);color:var(--accent);border:1px solid rgba(245,158,11,.25)}
+  .badge-red{background:rgba(239,68,68,.15);color:var(--danger);border:1px solid rgba(239,68,68,.25)}
+  .badge-blue{background:rgba(59,130,246,.15);color:var(--accent2);border:1px solid rgba(59,130,246,.25)}
+  .badge-gray{background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
+
+  /* ─── TABLE ─── */
+  .data-table{width:100%;border-collapse:collapse;font-size:13px}
+  .data-table th{
+    text-align:left;padding:10px 12px;font-family:'DM Mono',monospace;
+    font-size:10px;text-transform:uppercase;letter-spacing:.8px;
+    color:var(--text3);border-bottom:1px solid var(--border);background:var(--bg2);
+  }
+  .data-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+  .data-table tr:hover td{background:rgba(255,255,255,.02)}
+  .data-table tr:last-child td{border-bottom:none}
+  .scroll-table{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
+
+  /* ─── LOGIN PAGE ─── */
+  #login-page{
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;background:var(--bg);
+    background-image:radial-gradient(ellipse at 20% 50%,rgba(245,158,11,.06) 0%,transparent 60%),
+                     radial-gradient(ellipse at 80% 20%,rgba(59,130,246,.05) 0%,transparent 50%);
+  }
+  .login-box{
+    width:100%;max-width:420px;padding:40px;
+    background:var(--card);border:1px solid var(--border);border-radius:16px;
+  }
+  .login-header{text-align:center;margin-bottom:32px}
+  .login-logo{
+    width:56px;height:56px;border-radius:14px;margin:0 auto 16px;
+    background:linear-gradient(135deg,var(--accent),#d97706);
+    display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:#000;
+  }
+  .login-title{font-family:'Syne',sans-serif;font-weight:800;font-size:26px;letter-spacing:-0.5px}
+  .login-sub{color:var(--text3);font-size:13px;margin-top:4px}
+  .login-phase{
+    display:inline-block;margin-top:10px;
+    background:linear-gradient(135deg,rgba(245,158,11,.2),rgba(245,158,11,.05));
+    border:1px solid rgba(245,158,11,.3);color:var(--accent);
+    font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;
+    border-radius:4px;letter-spacing:1px;
+  }
+  .tab-switcher{display:flex;gap:4px;background:var(--bg2);padding:4px;border-radius:8px;margin-bottom:24px}
+  .tab-sw-btn{
+    flex:1;padding:8px;border-radius:6px;background:transparent;border:none;
+    color:var(--text3);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;
+    font-family:'DM Sans',sans-serif;
+  }
+  .tab-sw-btn.active{background:var(--card);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+
+  /* ─── RISK METER ─── */
+  .risk-meter{margin-top:8px}
+  .risk-bar-outer{height:6px;background:var(--bg2);border-radius:3px;overflow:hidden}
+  .risk-bar-inner{height:100%;border-radius:3px;transition:width .8s ease}
+  .risk-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:4px;font-family:'DM Mono',monospace}
+
+  /* ─── DISRUPTION TRIGGERS ─── */
+  .trigger-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:16px}
+  .trigger-card{
+    background:var(--bg3);border:1px solid var(--border);border-radius:10px;
+    padding:14px;cursor:pointer;transition:all .2s;position:relative;
+  }
+  .trigger-card:hover{border-color:var(--accent);background:var(--bg2)}
+  .trigger-card.selected{border-color:var(--accent);background:rgba(245,158,11,.08)}
+  .trigger-card.active-disruption{
+    border-color:var(--danger);background:rgba(239,68,68,.08);
+    animation:disruption-pulse 2s infinite;
+  }
+  @keyframes disruption-pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.3)}50%{box-shadow:0 0 0 6px rgba(239,68,68,0)}}
+  .trigger-icon{font-size:22px;margin-bottom:8px}
+  .trigger-name{font-size:13px;font-weight:600;color:var(--text)}
+  .trigger-val{font-size:12px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace}
+  .trigger-status{font-size:10px;margin-top:6px}
+
+  /* ─── LOCATION MAP PLACEHOLDER ─── */
+  .map-box{
+    background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+    height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    position:relative;overflow:hidden;margin-bottom:12px;
+  }
+  .map-grid{
+    position:absolute;inset:0;
+    background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+    background-size:30px 30px;opacity:.4;
+  }
+  .map-pin{font-size:32px;position:relative;z-index:2;animation:map-bob .6s ease-in-out infinite alternate}
+  @keyframes map-bob{from{transform:translateY(-3px)}to{transform:translateY(3px)}}
+  .map-coords{
+    font-family:'DM Mono',monospace;font-size:12px;color:var(--accent3);
+    position:relative;z-index:2;margin-top:6px;
+  }
+  .map-city{font-size:11px;color:var(--text3);position:relative;z-index:2;margin-top:2px}
+
+  /* ─── PAYOUT ANIMATION ─── */
+  .payout-flash{
+    animation:payout-glow .5s ease 3;
+  }
+  @keyframes payout-glow{
+    0%,100%{box-shadow:none}
+    50%{box-shadow:0 0 20px rgba(16,185,129,.5)}
+  }
+
+  /* ─── CLAIM TIMELINE ─── */
+  .timeline{display:flex;flex-direction:column;gap:0}
+  .tl-item{display:flex;gap:12px;padding-bottom:16px;position:relative}
+  .tl-item:last-child{padding-bottom:0}
+  .tl-item:not(:last-child)::before{
+    content:'';position:absolute;left:11px;top:24px;bottom:0;
+    width:1px;background:var(--border);
+  }
+  .tl-dot{
+    width:24px;height:24px;border-radius:50%;border:2px solid var(--border2);
+    display:grid;place-items:center;font-size:10px;flex-shrink:0;
+    background:var(--bg2);position:relative;z-index:1;
+  }
+  .tl-dot.done{border-color:var(--accent3);background:rgba(16,185,129,.15);color:var(--accent3)}
+  .tl-dot.active{border-color:var(--accent);background:rgba(245,158,11,.15);color:var(--accent);animation:pulse 1s infinite}
+  .tl-content{flex:1;padding-top:2px}
+  .tl-title{font-size:13px;font-weight:600;color:var(--text)}
+  .tl-time{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px}
+
+  /* ─── FRAUD SCORE ─── */
+  .fraud-ring{
+    width:60px;height:60px;border-radius:50%;
+    border:3px solid var(--border);display:grid;place-items:center;
+    font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+  }
+  .fraud-ring.low{border-color:var(--accent3);color:var(--accent3)}
+  .fraud-ring.med{border-color:var(--accent);color:var(--accent)}
+  .fraud-ring.high{border-color:var(--danger);color:var(--danger)}
+
+  /* ─── HERO SECTION ─── */
+  .hero{
+    padding:40px 0 24px;
+    background:linear-gradient(180deg,rgba(245,158,11,.04) 0%,transparent 100%);
+    border-bottom:1px solid var(--border);margin-bottom:24px;
+  }
+  .hero-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);
+    color:var(--accent);font-size:11px;padding:4px 12px;border-radius:20px;
+    font-family:'DM Mono',monospace;letter-spacing:.5px;margin-bottom:12px;
+  }
+  .hero-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.5px;line-height:1.2}
+  .hero-sub{color:var(--text3);font-size:14px;margin-top:6px;line-height:1.6}
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+
+  /* ─── DIVIDER ─── */
+  .divider{height:1px;background:var(--border);margin:16px 0}
+  
+  /* ─── SPINNER ─── */
+  .spinner{
+    width:16px;height:16px;border:2px solid rgba(255,255,255,.2);
+    border-top-color:var(--accent);border-radius:50%;
+    animation:spin .7s linear infinite;display:inline-block;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ─── TIER CARDS ─── */
+  .tier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+  .tier-card{
+    background:var(--bg3);border:2px solid var(--border);border-radius:12px;
+    padding:16px;cursor:pointer;transition:all .2s;text-align:center;
+  }
+  .tier-card:hover{border-color:var(--text3)}
+  .tier-card.selected{border-color:var(--accent);background:rgba(245,158,11,.06)}
+  .tier-name{font-family:'Syne',sans-serif;font-weight:700;font-size:16px}
+  .tier-price{font-size:22px;font-weight:700;font-family:'Syne',sans-serif;color:var(--accent);margin:8px 0 4px}
+  .tier-price-sub{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace}
+  .tier-feat{font-size:12px;color:var(--text2);margin-top:8px;line-height:1.6}
+
+  /* ─── WEATHER WIDGET ─── */
+  .weather-widget{
+    background:linear-gradient(135deg,var(--bg3),var(--bg2));
+    border:1px solid var(--border2);border-radius:12px;padding:16px;
+    display:flex;align-items:center;gap:16px;
+  }
+  .weather-icon{font-size:36px}
+  .weather-temp{font-family:'Syne',sans-serif;font-size:28px;font-weight:700}
+  .weather-desc{font-size:13px;color:var(--text2);margin-top:2px}
+  .weather-meta{font-size:11px;color:var(--text3);margin-top:4px;font-family:'DM Mono',monospace}
+
+  /* responsive */
+  @media(max-width:640px){
+    .form-grid{grid-template-columns:1fr}
+    .tier-grid{grid-template-columns:1fr}
+    .stats-grid{grid-template-columns:1fr 1fr}
+    .section{padding:20px 16px}
+    #nav{overflow-x:auto;padding:12px 16px 0}
+    .nav-tab{white-space:nowrap;font-size:12px;padding:6px 12px}
+  }
+</style>
+</head>
+<body>
+
+<!-- PORTAL SELECTION PAGE -->
+<div id="portal-select-page" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);background-image:radial-gradient(ellipse at 20% 50%,rgba(245,158,11,.07) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(59,130,246,.06) 0%,transparent 50%);">
+  <div style="text-align:center;max-width:560px;padding:40px 24px;width:100%">
+    <div style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--accent),#d97706);display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:800;font-size:26px;color:#000;margin:0 auto 20px;">G</div>
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:30px;letter-spacing:-0.5px">GigShield AI</div>
+    <div style="color:var(--text3);font-size:14px;margin-top:6px">Parametric Income Insurance · Gig Economy</div>
+    <div style="display:inline-block;margin:14px 0 36px;background:linear-gradient(135deg,rgba(245,158,11,.2),rgba(245,158,11,.05));border:1px solid rgba(245,158,11,.3);color:var(--accent);font-family:'DM Mono',monospace;font-size:10px;padding:4px 12px;border-radius:4px;letter-spacing:1.2px;">PHASE 2 · AUTOMATION &amp; PROTECTION</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:28px;font-weight:500">Choose your portal to continue</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <!-- Worker Portal -->
+      <div onclick="showLoginPage('worker')" style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 20px;cursor:pointer;transition:all .25s;text-align:center;position:relative;overflow:hidden" 
+           onmouseover="this.style.borderColor='var(--accent)';this.style.background='rgba(245,158,11,.06)'"
+           onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--card)'">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent)"></div>
+        <div style="font-size:40px;margin-bottom:14px">🛵</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:17px;margin-bottom:6px">Worker Portal</div>
+        <div style="font-size:12px;color:var(--text3);line-height:1.5">For delivery partners on Zomato, Swiggy, Zepto, Amazon & more</div>
+        <div style="margin-top:16px;display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:var(--accent);padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600">Login / Register →</div>
+      </div>
+      <!-- Admin Portal -->
+      <div onclick="showLoginPage('admin')" style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 20px;cursor:pointer;transition:all .25s;text-align:center;position:relative;overflow:hidden"
+           onmouseover="this.style.borderColor='var(--accent2)';this.style.background='rgba(59,130,246,.06)'"
+           onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--card)'">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--accent2),transparent)"></div>
+        <div style="font-size:40px;margin-bottom:14px">🔐</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:17px;margin-bottom:6px">Admin Portal</div>
+        <div style="font-size:12px;color:var(--text3);line-height:1.5">For insurers & administrators managing policies, claims and analytics</div>
+        <div style="margin-top:16px;display:inline-flex;align-items:center;gap:6px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);color:var(--accent2);padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600">Admin Login →</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WORKER LOGIN PAGE -->
+<div id="login-page" style="display:none;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);background-image:radial-gradient(ellipse at 20% 50%,rgba(245,158,11,.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(59,130,246,.05) 0%,transparent 50%);">
+  <div class="login-box">
+    <button onclick="showPortalSelect()" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;margin-bottom:20px;padding:0;font-family:'DM Mono',monospace;">← Back to portal select</button>
+    <div class="login-header">
+      <div class="login-logo" style="background:linear-gradient(135deg,var(--accent),#d97706)">🛵</div>
+      <div class="login-title">Worker Portal</div>
+      <div class="login-sub">GigShield AI · Delivery Partner Insurance</div>
+      <div class="login-phase">PHASE 2 · INCOME PROTECTION</div>
+    </div>
+    <div class="tab-switcher">
+      <button class="tab-sw-btn active" onclick="switchLoginTab('login')">Login</button>
+      <button class="tab-sw-btn" onclick="switchLoginTab('register')">Register</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="login-form-area">
+      <div id="login-alert"></div>
+      <div class="field" style="margin-bottom:12px">
+        <label>Phone Number</label>
+        <input type="tel" id="login-phone" placeholder="+91 9999999999"/>
+      </div>
+      <div class="field" style="margin-bottom:20px">
+        <label>Password</label>
+        <input type="password" id="login-pwd" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="doLogin()" id="login-btn">Sign In</button>
+      <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--text3)">
+        Demo: <span style="color:var(--accent);font-family:'DM Mono',monospace">9876543210</span> / 
+        <span style="color:var(--accent);font-family:'DM Mono',monospace">Demo@1234</span>
+      </div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="register-form-area" style="display:none">
+      <div id="reg-alert"></div>
+      <div class="form-grid" style="margin-bottom:12px">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="reg-name" placeholder="Arjun Kumar"/>
+        </div>
+        <div class="field">
+          <label>Phone</label>
+          <input type="tel" id="reg-phone" placeholder="9876543210"/>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="reg-pwd" placeholder="Min 8 chars"/>
+        </div>
+        <div class="field">
+          <label>Platform</label>
+          <select id="reg-platform">
+            <option value="Zomato">Zomato</option>
+            <option value="Swiggy">Swiggy</option>
+            <option value="Zepto">Zepto</option>
+            <option value="Blinkit">Blinkit</option>
+            <option value="Amazon">Amazon</option>
+            <option value="Dunzo">Dunzo</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>City</label>
+          <select id="reg-city">
+            <option value="Chennai">Chennai</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Bengaluru">Bengaluru</option>
+            <option value="Hyderabad">Hyderabad</option>
+            <option value="Kolkata">Kolkata</option>
+            <option value="Pune">Pune</option>
+            <option value="Ahmedabad">Ahmedabad</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Zone / Area</label>
+          <input type="text" id="reg-zone" placeholder="Velachery, T.Nagar..."/>
+        </div>
+        <div class="field">
+          <label>Avg Daily Income (₹)</label>
+          <input type="number" id="reg-income" value="700" min="200" max="3000"/>
+        </div>
+        <div class="field">
+          <label>Active Hours/Day</label>
+          <input type="number" id="reg-hours" value="10" min="4" max="16"/>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="doRegister()" id="reg-btn">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN PAGE -->
+<div id="admin-login-page" style="display:none;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);background-image:radial-gradient(ellipse at 80% 50%,rgba(59,130,246,.07) 0%,transparent 60%),radial-gradient(ellipse at 20% 20%,rgba(245,158,11,.05) 0%,transparent 50%);">
+  <div class="login-box" style="border-color:rgba(59,130,246,.25)">
+    <button onclick="showPortalSelect()" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;margin-bottom:20px;padding:0;font-family:'DM Mono',monospace;">← Back to portal select</button>
+    <div class="login-header">
+      <div class="login-logo" style="background:linear-gradient(135deg,var(--accent2),#1d4ed8)">🔐</div>
+      <div class="login-title">Admin Portal</div>
+      <div class="login-sub">GigShield AI · Insurer & Administrator Access</div>
+      <div class="login-phase" style="border-color:rgba(59,130,246,.3);color:var(--accent2);background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(59,130,246,.05))">RESTRICTED ACCESS · ADMIN ONLY</div>
+    </div>
+    <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:14px;margin-bottom:20px">
+      <div style="font-size:12px;color:var(--accent2);font-family:'DM Mono',monospace;margin-bottom:4px">⚠ ADMIN ACCESS</div>
+      <div style="font-size:12px;color:var(--text3)">This portal is for insurance administrators. Worker accounts are not accessible here.</div>
+    </div>
+    <div id="admin-login-alert"></div>
+    <div class="field" style="margin-bottom:12px">
+      <label>Admin Phone / Username</label>
+      <input type="tel" id="admin-login-phone" placeholder="Admin credentials"/>
+    </div>
+    <div class="field" style="margin-bottom:20px">
+      <label>Admin Password</label>
+      <input type="password" id="admin-login-pwd" placeholder="••••••••" onkeydown="if(event.key==='Enter')doAdminLogin()"/>
+    </div>
+    <button class="btn btn-full" onclick="doAdminLogin()" id="admin-login-btn" style="background:var(--accent2);color:#fff;border:none;padding:11px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s">
+      🔐 Admin Sign In
+    </button>
+    <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--text3)">
+      Demo Admin: <span style="color:var(--accent2);font-family:'DM Mono',monospace">1111111111</span> / 
+      <span style="color:var(--accent2);font-family:'DM Mono',monospace">Admin@123</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:none">
+  <!-- TOPBAR -->
+  <div id="topbar">
+    <div class="topbar-left">
+      <div class="logo-mark">G</div>
+      <div class="logo-text">Gig<span>Shield</span> AI</div>
+      <div class="phase-badge">Phase 2</div>
+    </div>
+    <div class="topbar-right">
+      <div id="live-location-pill" onclick="refreshLocation()" title="Click to refresh location">
+        <div class="loc-dot" id="loc-dot"></div>
+        <span id="loc-text">Detecting...</span>
+      </div>
+      <div id="user-pill">
+        <span>👤</span><span id="user-name-pill">—</span>
+      </div>
+      <button class="btn btn-sm" id="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- NAV TABS -->
+  <div id="nav">
+    <button class="nav-tab active" onclick="showTab('dashboard')" data-tab="dashboard"><span class="tab-icon">📊</span>Dashboard</button>
+    <button class="nav-tab" onclick="showTab('policy')" data-tab="policy"><span class="tab-icon">🛡</span>Policy</button>
+    <button class="nav-tab" onclick="showTab('monitor')" data-tab="monitor"><span class="tab-icon">🌦</span>Monitor</button>
+    <button class="nav-tab" onclick="showTab('claims')" data-tab="claims"><span class="tab-icon">⚡</span>Claims</button>
+    <button class="nav-tab" id="admin-tab" onclick="showTab('admin')" data-tab="admin" style="display:none"><span class="tab-icon">🔐</span>Admin</button>
+  </div>
+
+  <!-- DASHBOARD TAB -->
+  <div class="section active" id="tab-dashboard">
+    <div id="dash-alert"></div>
+    <div class="hero">
+      <div class="hero-badge">🛡 ACTIVE COVERAGE</div>
+      <div class="hero-title" id="dash-welcome">Welcome back</div>
+      <div class="hero-sub" id="dash-sub">Loading your protection status...</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" id="dash-stats">
+      <div class="stat-tile" style="--accent-color:var(--accent3)">
+        <div class="stat-val" id="d-income">₹0</div>
+        <div class="stat-lbl">Income Protected</div>
+        <div class="stat-sub">All time payouts</div>
+      </div>
+      <div class="stat-tile" style="--accent-color:var(--accent2)">
+        <div class="stat-val" id="d-claims">0</div>
+        <div class="stat-lbl">Total Claims</div>
+        <div class="stat-sub" id="d-claims-sub">0 approved</div>
+      </div>
+      <div class="stat-tile" style="--accent-color:var(--accent)">
+        <div class="stat-val" id="d-payout">₹0</div>
+        <div class="stat-lbl">Max Payout</div>
+        <div class="stat-sub" id="d-policy-tier">No active policy</div>
+      </div>
+      <div class="stat-tile" style="--accent-color:var(--warn)">
+        <div class="stat-val" id="d-risk">—</div>
+        <div class="stat-lbl">Risk Score</div>
+        <div class="stat-sub" id="d-risk-sub">Loading...</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <!-- Policy Card -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>Active Policy</div>
+        <div id="dash-policy-detail">
+          <div style="color:var(--text3);font-size:13px">No active policy this week.</div>
+          <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="showTab('policy')">Get Coverage →</button>
+        </div>
+      </div>
+
+      <!-- Live Location -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>Live Location</div>
+        <div class="map-box" id="map-box">
+          <div class="map-grid"></div>
+          <div class="map-pin" id="map-pin">📍</div>
+          <div class="map-coords" id="map-coords">Acquiring GPS...</div>
+          <div class="map-city" id="map-city-label">—</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:12px;color:var(--text3)">
+            <span id="loc-accuracy">—</span>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="pushLocationToServer()">📡 Push to Server</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Risk Forecast -->
+    <div class="card" style="margin-top:16px">
+      <div class="card-title"><span class="dot"></span>AI Risk Forecast — This Week</div>
+      <div id="risk-forecast-area">
+        <div style="color:var(--text3);font-size:13px">Loading risk data...</div>
+      </div>
+    </div>
+
+    <!-- Last Disruption -->
+    <div class="card" id="last-disruption-card" style="display:none">
+      <div class="card-title"><span class="dot"></span>⚠️ Last Disruption in Your Zone</div>
+      <div id="last-disruption-content"></div>
+    </div>
+  </div>
+
+  <!-- POLICY TAB -->
+  <div class="section" id="tab-policy">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Current Policy Status</div>
+      <div id="policy-status-area">
+        <div style="color:var(--text3);font-size:13px">Checking policy...</div>
+      </div>
+    </div>
+
+    <div id="policy-create-area">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>Choose Coverage Tier — Weekly</div>
+        <div class="tier-grid" id="tier-grid">
+          <div class="tier-card selected" onclick="selectTier('basic',this)">
+            <div class="tier-name">Basic</div>
+            <div class="tier-price">₹49<span style="font-size:14px">/wk</span></div>
+            <div class="tier-price-sub">BASE PREMIUM</div>
+            <div class="tier-feat">4 hrs coverage<br>Up to ₹500 payout<br>2 claim triggers</div>
+          </div>
+          <div class="tier-card" onclick="selectTier('standard',this)">
+            <div class="tier-name">Standard</div>
+            <div class="tier-price">₹89<span style="font-size:14px">/wk</span></div>
+            <div class="tier-price-sub">MOST POPULAR</div>
+            <div class="tier-feat">8 hrs coverage<br>Up to ₹1200 payout<br>4 claim triggers</div>
+          </div>
+          <div class="tier-card" onclick="selectTier('pro',this)">
+            <div class="tier-name">Pro</div>
+            <div class="tier-price">₹149<span style="font-size:14px">/wk</span></div>
+            <div class="tier-price-sub">FULL PROTECTION</div>
+            <div class="tier-feat">12 hrs coverage<br>Up to ₹2500 payout<br>All triggers</div>
+          </div>
+        </div>
+
+        <div id="premium-preview" class="alert alert-info" style="display:none"></div>
+
+        <div class="form-grid" style="margin-top:16px">
+          <div class="field">
+            <label>Payment Method</label>
+            <select id="pol-payment">
+              <option value="upi">UPI</option>
+              <option value="wallet">Wallet</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>UPI ID</label>
+            <input type="text" id="pol-upi" placeholder="yourname@upi"/>
+          </div>
+        </div>
+
+        <div id="pol-alert" style="margin-top:12px"></div>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button class="btn btn-secondary" onclick="calcPremium()">🧮 Calculate AI Premium</button>
+          <button class="btn btn-primary" onclick="createPolicy()">🛡 Activate Weekly Policy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MONITOR / DISRUPTION TAB -->
+  <div class="section" id="tab-monitor">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>🌦 Real-Time Weather · Your Location</div>
+      <div id="weather-widget-area">
+        <div style="color:var(--text3);font-size:13px">Fetching weather data...</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Disruption Triggers — Live Check</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:14px">
+        These triggers are monitored automatically every 5 minutes. A disruption auto-files a claim.
+      </div>
+      <div class="trigger-grid" id="trigger-grid">
+        <!-- populated by JS -->
+      </div>
+      <div id="trigger-alert"></div>
+      <div class="form-grid" style="margin-top:12px">
+        <div class="field">
+          <label>Zone Override (optional)</label>
+          <input type="text" id="zone-input" placeholder="Velachery / T.Nagar ..."/>
+        </div>
+        <div class="field">
+          <label>City</label>
+          <input type="text" id="city-input" placeholder="Chennai"/>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:12px" onclick="checkZone()">⚡ Run Live Zone Check</button>
+    </div>
+
+    <div class="card" id="zone-result-card" style="display:none">
+      <div class="card-title"><span class="dot"></span>Zone Check Result</div>
+      <div id="zone-result-content"></div>
+    </div>
+  </div>
+
+  <!-- CLAIMS TAB -->
+  <div class="section" id="tab-claims">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>File a Claim — Parametric</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:14px">
+        Claims are auto-validated. Payout hits your UPI within 60 seconds.
+      </div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Trigger Type</label>
+          <select id="claim-trigger">
+            <option value="heavy_rain">🌧 Heavy Rain</option>
+            <option value="extreme_heat">🌡 Extreme Heat</option>
+            <option value="flood">🌊 Flood Alert</option>
+            <option value="severe_aqi">💨 Severe AQI</option>
+            <option value="curfew">🚫 Curfew / Strike</option>
+            <option value="app_outage">📵 Platform Outage</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Trigger Value (mm / °C / AQI)</label>
+          <input type="number" id="claim-tval" placeholder="e.g. 85" step="0.1"/>
+        </div>
+        <div class="field">
+          <label>Disruption Hours Lost</label>
+          <input type="number" id="claim-hours" value="4" min="1" max="12"/>
+        </div>
+        <div class="field">
+          <label>Zone</label>
+          <input type="text" id="claim-zone" placeholder="Your delivery zone"/>
+        </div>
+      </div>
+      <div id="claim-alert" style="margin-top:12px"></div>
+      <button class="btn btn-primary" style="margin-top:16px" onclick="fileClaim()">⚡ Submit Claim</button>
+    </div>
+
+    <!-- Claim Timeline (last claim) -->
+    <div class="card" id="claim-timeline-card" style="display:none">
+      <div class="card-title"><span class="dot"></span>Last Claim Status</div>
+      <div id="claim-timeline"></div>
+    </div>
+
+    <!-- Claims History -->
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Claims History</div>
+      <div id="claims-list">
+        <div style="color:var(--text3);font-size:13px">Loading claims...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN TAB -->
+  <div class="section" id="tab-admin">
+    <div class="stats-grid" id="admin-stats">
+      <div class="stat-tile"><div class="stat-val" id="a-workers">—</div><div class="stat-lbl">Workers</div></div>
+      <div class="stat-tile"><div class="stat-val" id="a-policies">—</div><div class="stat-lbl">Active Policies</div></div>
+      <div class="stat-tile"><div class="stat-val" id="a-claims">—</div><div class="stat-lbl">Total Claims</div></div>
+      <div class="stat-tile"><div class="stat-val" id="a-payouts">₹—</div><div class="stat-lbl">Total Payouts</div></div>
+      <div class="stat-tile" style="--accent-color:var(--danger)"><div class="stat-val" id="a-fraud">—</div><div class="stat-lbl">Fraud Blocked</div></div>
+      <div class="stat-tile" style="--accent-color:var(--warn)"><div class="stat-val" id="a-ratio">—</div><div class="stat-lbl">Loss Ratio</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>All Claims — Admin View</div>
+      <div class="scroll-table">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Worker</th><th>Trigger</th><th>Zone</th><th>Hours</th>
+              <th>Fraud Score</th><th>Payout</th><th>Status</th><th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="admin-claims-body">
+            <tr><td colspan="8" style="color:var(--text3);text-align:center">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Registered Workers</div>
+      <div class="scroll-table">
+        <table class="data-table">
+          <thead>
+            <tr><th>ID</th><th>Name</th><th>Phone</th><th>Platform</th><th>City</th><th>Zone</th><th>Income/Day</th></tr>
+          </thead>
+          <tbody id="admin-workers-body">
+            <tr><td colspan="7" style="color:var(--text3);text-align:center">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div><!-- /app -->
+
+<!-- ─── MULTILINGUAL AI CHATBOT ─── -->
+<div id="chatbot-fab" onclick="toggleChatbot()" title="GigShield Assistant" style="
+  position:fixed;bottom:28px;right:28px;z-index:999;
+  width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),#d97706);
+  display:none;align-items:center;justify-content:center;
+  cursor:pointer;box-shadow:0 4px 20px rgba(245,158,11,.4);
+  font-size:24px;border:none;transition:all .2s;
+  animation:fab-pulse 3s infinite;
+">💬</div>
+<style>
+@keyframes fab-pulse{0%,100%{box-shadow:0 4px 20px rgba(245,158,11,.4)}50%{box-shadow:0 4px 30px rgba(245,158,11,.7)}}
+
+#chatbot-panel{
+  position:fixed;bottom:96px;right:28px;z-index:998;
+  width:380px;max-height:560px;
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:16px;display:none;flex-direction:column;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  overflow:hidden;
+}
+#chatbot-panel.open{display:flex}
+
+.chat-header{
+  background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(59,130,246,.08));
+  border-bottom:1px solid var(--border);
+  padding:14px 16px;display:flex;align-items:center;gap:10px;
+}
+.chat-header-avatar{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),#d97706);
+  display:grid;place-items:center;font-size:18px;flex-shrink:0;
+}
+.chat-header-info{flex:1}
+.chat-header-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700}
+.chat-header-status{font-size:11px;color:var(--accent3);display:flex;align-items:center;gap:4px}
+.chat-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;line-height:1}
+
+.lang-bar{
+  display:flex;gap:4px;padding:8px 12px;background:var(--bg2);
+  border-bottom:1px solid var(--border);overflow-x:auto;
+}
+.lang-btn{
+  padding:3px 10px;border-radius:12px;font-size:11px;font-family:'DM Mono',monospace;
+  background:var(--bg3);border:1px solid var(--border);color:var(--text3);
+  cursor:pointer;white-space:nowrap;transition:all .15s;
+}
+.lang-btn.active{background:rgba(245,158,11,.15);border-color:rgba(245,158,11,.4);color:var(--accent)}
+
+#chat-messages{
+  flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;
+  min-height:0;
+}
+.chat-msg{max-width:85%;display:flex;flex-direction:column;gap:3px}
+.chat-msg.user{align-self:flex-end;align-items:flex-end}
+.chat-msg.bot{align-self:flex-start;align-items:flex-start}
+.chat-bubble{
+  padding:10px 13px;border-radius:12px;font-size:13px;line-height:1.5;
+  word-break:break-word;
+}
+.chat-msg.user .chat-bubble{
+  background:linear-gradient(135deg,var(--accent),#d97706);color:#000;font-weight:500;
+  border-radius:12px 12px 2px 12px;
+}
+.chat-msg.bot .chat-bubble{
+  background:var(--bg3);border:1px solid var(--border2);color:var(--text);
+  border-radius:12px 12px 12px 2px;
+}
+.chat-time{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace}
+.chat-typing{display:flex;gap:4px;padding:12px 14px;align-items:center}
+.chat-typing span{width:7px;height:7px;border-radius:50%;background:var(--text3);animation:typing-dot 1.2s infinite}
+.chat-typing span:nth-child(2){animation-delay:.2s}
+.chat-typing span:nth-child(3){animation-delay:.4s}
+@keyframes typing-dot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+
+.quick-chips{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px;border-top:1px solid var(--border)}
+.chip{
+  padding:5px 12px;border-radius:16px;font-size:11px;
+  background:var(--bg3);border:1px solid var(--border2);color:var(--text2);
+  cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+
+.chat-input-row{
+  display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--border);
+}
+#chat-input{
+  flex:1;background:var(--bg2);border:1px solid var(--border2);
+  color:var(--text);padding:9px 12px;border-radius:8px;font-size:13px;
+  font-family:'DM Sans',sans-serif;outline:none;resize:none;min-height:38px;max-height:100px;
+}
+#chat-input:focus{border-color:var(--accent2)}
+#chat-send{
+  background:var(--accent);color:#000;border:none;padding:9px 14px;
+  border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;
+  transition:all .2s;flex-shrink:0;
+}
+#chat-send:hover{background:#d97706}
+#chat-send:disabled{opacity:.5;cursor:not-allowed}
+</style>
+
+<script>
+// ─── CHATBOT LOGIC ────────────────────────────────────────────────────────────
+const CHAT_LANGS = [
+  {code:'en',label:'EN',name:'English'},
+  {code:'hi',label:'हिं',name:'हिंदी'},
+  {code:'ta',label:'தமி',name:'தமிழ்'},
+  {code:'te',label:'తెలు',name:'తెలుగు'},
+  {code:'kn',label:'ಕನ್ನ',name:'ಕನ್ನಡ'},
+  {code:'ml',label:'മലയ',name:'മലയാളം'},
+  {code:'bn',label:'বাং',name:'বাংলা'},
+  {code:'mr',label:'मरा',name:'मराठी'},
+];
+
+let chatLang = 'en';
+let chatHistory = [];
+let chatTyping = false;
+
+function toggleChatbot() {
+  const p = document.getElementById('chatbot-panel');
+  p.classList.toggle('open');
+  if (p.classList.contains('open') && chatHistory.length === 0) {
+    initChatbot();
+  }
+}
+
+function initChatbot() {
+  const msgs = document.getElementById('chat-messages');
+  const langBar = document.getElementById('chat-lang-bar');
+  // render lang buttons
+  langBar.innerHTML = CHAT_LANGS.map(l =>
+    `<button class="lang-btn${l.code===chatLang?' active':''}" onclick="setChatLang('${l.code}',this)" title="${l.name}">${l.label}</button>`
+  ).join('');
+  // welcome message
+  addBotMsg(getWelcomeMsg());
+  renderQuickChips();
+}
+
+function getWelcomeMsg() {
+  const msgs = {
+    en: "👋 Hi! I'm your **GigShield Assistant**. I can help you with policies, claims, payouts, and disruption coverage.\n\nWhat would you like to know?",
+    hi: "👋 नमस्ते! मैं आपका **GigShield सहायक** हूं। मैं पॉलिसी, दावे, भुगतान और रुकावट कवरेज में आपकी मदद कर सकता हूं।\n\nआप क्या जानना चाहते हैं?",
+    ta: "👋 வணக்கம்! நான் உங்கள் **GigShield உதவியாளர்**. பாலிசி, க்ளெய்ம், பணம் திரும்பப் பெறுதல் குறித்து உதவ தயாராக இருக்கிறேன்।\n\nஎன்ன தெரிந்துகொள்ள விரும்புகிறீர்கள்?",
+    te: "👋 నమస్కారం! నేను మీ **GigShield సహాయకుడు**. పాలసీ, క్లెయిమ్లు, చెల్లింపులు గురించి సహాయం చేయగలను।\n\nమీకు ఏమి తెలుసుకోవాలి?",
+    kn: "👋 ನಮಸ್ಕಾರ! ನಾನು ನಿಮ್ಮ **GigShield ಸಹಾಯಕ**. ಪಾಲಿಸಿ, ಕ್ಲೈಮ್, ಮತ್ತು ಪಾವತಿ ಬಗ್ಗೆ ಸಹಾಯ ಮಾಡುತ್ತೇನೆ।\n\nನೀವು ಏನು ತಿಳಿಯಲು ಬಯಸುತ್ತೀರಿ?",
+    ml: "👋 നമസ്കാരം! ഞാൻ നിങ്ങളുടെ **GigShield സഹായകൻ**. പോളിസി, ക്ലെയിം, പേ out ട്ട് എന്നിവ സഹായിക്കാൻ തയ്യാറാണ്।\n\nനിങ്ങൾക്ക് എന്ത് അറിയണം?",
+    bn: "👋 নমস্কার! আমি আপনার **GigShield সহায়ক**। পলিসি, দাবি, পেআউট সম্পর্কে সাহায্য করতে পারি।\n\nআপনি কী জানতে চান?",
+    mr: "👋 नमस्कार! मी तुमचा **GigShield सहाय्यक** आहे. पॉलिसी, दावे, पेआउट याबद्दल मदत करू शकतो।\n\nतुम्हाला काय जाणून घ्यायचे आहे?",
+  };
+  return msgs[chatLang] || msgs.en;
+}
+
+function setChatLang(code, btn) {
+  chatLang = code;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function renderQuickChips() {
+  const chips = {
+    en: ['How does a claim work?','What triggers a payout?','View my policy','Fraud detection','Weekly pricing','File a claim'],
+    hi: ['दावा कैसे करें?','पेआउट कब मिलता है?','मेरी पॉलिसी देखें','धोखाधड़ी रोकना','साप्ताहिक मूल्य'],
+    ta: ['க்ளெய்ம் எப்படி?','பணம் எப்போது?','என் பாலிசி','மோசடி தடுப்பு','வாராந்திர விலை'],
+    te: ['క్లెయిమ్ ఎలా?','పేమెంట్ ఎప్పుడు?','నా పాలసీ','మోసం నివారణ'],
+    kn: ['ಕ್ಲೈಮ್ ಹೇಗೆ?','ಪಾವತಿ ಯಾವಾಗ?','ನನ್ನ ಪಾಲಿಸಿ'],
+    ml: ['ക്ലെയിം എങ്ങനെ?','പേ out ട്ട് എപ്പോൾ?','എന്റെ പോളിസി'],
+    bn: ['দাবি কীভাবে?','পেআউট কখন?','আমার পলিসি'],
+    mr: ['दावा कसा करावा?','पेआउट केव्हा?','माझी पॉलिसी'],
+  };
+  const langChips = chips[chatLang] || chips.en;
+  document.getElementById('chat-quick-chips').innerHTML = langChips.map(c =>
+    `<button class="chip" onclick="sendChip('${c}')">${c}</button>`
+  ).join('');
+}
+
+function sendChip(txt) {
+  document.getElementById('chat-input').value = txt;
+  sendChat();
+}
+
+function addBotMsg(text) {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg bot';
+  // convert **bold**
+  const html = text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  div.innerHTML = `<div class="chat-bubble">${html}</div><div class="chat-time">${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  chatHistory.push({role:'assistant',content:text});
+}
+
+function addUserMsg(text) {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg user';
+  div.innerHTML = `<div class="chat-bubble">${text}</div><div class="chat-time">${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  chatHistory.push({role:'user',content:text});
+}
+
+function showTyping() {
+  const msgs = document.getElementById('chat-messages');
+  const d = document.createElement('div');
+  d.className = 'chat-msg bot'; d.id = 'chat-typing-indicator';
+  d.innerHTML = `<div class="chat-bubble" style="padding:8px 14px"><div class="chat-typing"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function hideTyping() {
+  const d = document.getElementById('chat-typing-indicator');
+  if (d) d.remove();
+}
+
+async function sendChat() {
+  const inp = document.getElementById('chat-input');
+  const text = inp.value.trim();
+  if (!text || chatTyping) return;
+  inp.value = '';
+  addUserMsg(text);
+  chatTyping = true;
+  document.getElementById('chat-send').disabled = true;
+  showTyping();
+
+  const langNames = {en:'English',hi:'Hindi',ta:'Tamil',te:'Telugu',kn:'Kannada',ml:'Malayalam',bn:'Bengali',mr:'Marathi'};
+  const workerCtx = userData ? `The user is ${userData.name}, a ${userData.platform||'gig'} delivery worker in ${userData.city||'India'}, zone: ${userData.zone||'unknown'}, avg daily income: ₹${userData.avg_daily_income||700}.` : 'The user is a gig delivery worker in India.';
+
+  const systemPrompt = `You are GigShield Assistant, an AI helper for GigShield — an AI-powered parametric income insurance platform for gig delivery workers in India (Zomato, Swiggy, Zepto, Amazon, Blinkit, Dunzo etc.).
+
+${workerCtx}
+
+You help workers with:
+- Understanding their insurance policy and weekly premiums (₹49 Basic, ₹89 Standard, ₹149 Pro)
+- Filing and tracking claims (triggered by heavy rain >50mm, extreme heat >42°C, flood, AQI>300, curfews, platform outages)
+- How parametric payouts work (automatic, no paperwork, UPI in 60 seconds)
+- Fraud detection (GPS validation, duplicate claim prevention)
+- Disruption triggers and coverage details
+- General queries about gig worker income protection
+
+IMPORTANT: Respond ONLY in ${langNames[chatLang]||'English'}. Be concise, friendly, and helpful. Use simple language. Use emojis naturally. Keep responses under 150 words. Do NOT cover health insurance, vehicle repairs, accidents — only income loss.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: chatHistory.slice(-10).filter(m=>m.role==='user'||m.role==='assistant').map(m=>({role:m.role,content:m.content}))
+      })
+    });
+    const data = await response.json();
+    hideTyping();
+    const reply = data.content?.[0]?.text || 'Sorry, I could not get a response. Please try again.';
+    addBotMsg(reply);
+    renderQuickChips();
+  } catch(e) {
+    hideTyping();
+    addBotMsg('⚠️ Unable to connect. Please check your connection and try again.');
+  } finally {
+    chatTyping = false;
+    document.getElementById('chat-send').disabled = false;
+  }
+}
+</script>
+
+<!-- Chatbot Panel HTML -->
+<div id="chatbot-panel">
+  <div class="chat-header">
+    <div class="chat-header-avatar">🤖</div>
+    <div class="chat-header-info">
+      <div class="chat-header-name">GigShield Assistant</div>
+      <div class="chat-header-status"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent3);display:inline-block"></span> AI-Powered · Multilingual</div>
+    </div>
+    <button class="chat-close" onclick="toggleChatbot()">✕</button>
+  </div>
+  <div class="lang-bar" id="chat-lang-bar"></div>
+  <div id="chat-messages"></div>
+  <div class="quick-chips" id="chat-quick-chips"></div>
+  <div class="chat-input-row">
+    <textarea id="chat-input" placeholder="Ask me anything about your policy..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+    <button id="chat-send" onclick="sendChat()">➤</button>
+  </div>
+</div>
+
+<script>
+// ─── STATE ─────────────────────────────────────────────────────────────────
+// ─── STATE ─────────────────────────────────────────────────────────────────
+const API = '';  // same origin — FastAPI backend
+let authToken = localStorage.getItem('gs_token') || '';
+let userData  = JSON.parse(localStorage.getItem('gs_user') || 'null');
+let selectedTier = 'basic';
+let liveCoords = null;  // {lat, lng, accuracy, city, area}
+let weatherCache = null;
+let geoWatchId = null;
+
+// ─── UTILITIES ──────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+function authHeaders(extra={}) {
+  return {'Content-Type':'application/json','Authorization':'Bearer '+authToken,...extra};
+}
+async function apiFetch(path, opts={}) {
+  const res = await fetch(API+path, {
+    headers: authHeaders(),
+    ...opts,
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(()=>({detail:'Request failed'}));
+    throw new Error(err.detail || JSON.stringify(err));
+  }
+  return res.json();
+}
+function showAlert(elId, msg, type='err') {
+  $(elId).innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+}
+function clearAlert(elId) { $(elId).innerHTML=''; }
+function badge(status) {
+  const m = {approved:'green',pending:'yellow',rejected:'red',blocked:'red',processing:'blue',active:'green',expired:'gray'};
+  return `<span class="badge badge-${m[status]||'gray'}">${status}</span>`;
+}
+function fmt(n) { return '₹'+parseFloat(n||0).toLocaleString('en-IN',{maximumFractionDigits:0}); }
+
+// ─── LOGIN / REGISTER ────────────────────────────────────────────────────────
+function switchLoginTab(t) {
+  document.querySelectorAll('.tab-sw-btn').forEach((b,i)=>b.classList.toggle('active',
+    (t==='login'&&i===0)||(t==='register'&&i===1)));
+  $('login-form-area').style.display  = t==='login'  ? '' : 'none';
+  $('register-form-area').style.display = t==='register' ? '' : 'none';
+}
+async function doLogin() {
+  const phone=$('login-phone').value.trim().replace(/\D/g,'');
+  const pwd  =$('login-pwd').value;
+  if(!phone||!pwd){showAlert('login-alert','Enter phone and password','warn');return;}
+  $('login-btn').disabled=true; $('login-btn').innerHTML='<span class="spinner"></span>';
+  clearAlert('login-alert');
+  try{
+    const d=await apiFetch('/auth/login',{method:'POST',body:{phone,password:pwd}});
+    authToken=d.access_token;
+    userData=d.user;
+    localStorage.setItem('gs_token',authToken);
+    localStorage.setItem('gs_user',JSON.stringify(userData));
+    bootApp();
+  }catch(e){showAlert('login-alert',e.message);}
+  finally{$('login-btn').disabled=false;$('login-btn').innerHTML='Sign In';}
+}
+async function doRegister() {
+  const name=$('reg-name').value.trim();
+  const phone=$('reg-phone').value.trim().replace(/\D/g,'');
+  const pwd=$('reg-pwd').value;
+  const platform=$('reg-platform').value;
+  const city=$('reg-city').value;
+  const zone=$('reg-zone').value.trim()||city;
+  const income=parseFloat($('reg-income').value)||700;
+  const hours=parseFloat($('reg-hours').value)||10;
+  if(!name||!phone||!pwd){showAlert('reg-alert','Fill all required fields','warn');return;}
+  if(pwd.length<6){showAlert('reg-alert','Password min 6 chars','warn');return;}
+  $('reg-btn').disabled=true; $('reg-btn').innerHTML='<span class="spinner"></span>';
+  clearAlert('reg-alert');
+  try{
+    const d=await apiFetch('/auth/register',{method:'POST',body:{name,phone,password:pwd,platform,city,zone,avg_daily_income:income,active_hours:hours}});
+    showAlert('reg-alert',`✅ Registered! User ID: ${d.user_id}. Now login.`,'ok');
+    switchLoginTab('login');
+    $('login-phone').value=phone;
+  }catch(e){showAlert('reg-alert',e.message);}
+  finally{$('reg-btn').disabled=false;$('reg-btn').innerHTML='Create Account';}
+}
+function doLogout() {
+  authToken=''; userData=null;
+  localStorage.removeItem('gs_token'); localStorage.removeItem('gs_user');
+  if(geoWatchId){navigator.geolocation.clearWatch(geoWatchId);geoWatchId=null;}
+  // Reset chatbot
+  chatHistory=[];
+  document.getElementById('chat-messages').innerHTML='';
+  document.getElementById('chatbot-fab').style.display='none';
+  document.getElementById('chatbot-panel').classList.remove('open');
+  $('login-page').style.display='none';
+  $('admin-login-page').style.display='none';
+  $('app').style.display='none';
+  $('portal-select-page').style.display='flex';
+}
+
+function showPortalSelect() {
+  $('login-page').style.display='none';
+  $('admin-login-page').style.display='none';
+  $('portal-select-page').style.display='flex';
+}
+
+function showLoginPage(type) {
+  $('portal-select-page').style.display='none';
+  if (type === 'admin') {
+    $('admin-login-page').style.display='flex';
+    $('login-page').style.display='none';
+  } else {
+    $('login-page').style.display='flex';
+    $('admin-login-page').style.display='none';
+  }
+}
+
+async function doAdminLogin() {
+  const phone=$('admin-login-phone').value.trim().replace(/\D/g,'');
+  const pwd=$('admin-login-pwd').value;
+  if(!phone||!pwd){showAlert('admin-login-alert','Enter admin credentials','warn');return;}
+  $('admin-login-btn').disabled=true;
+  $('admin-login-btn').innerHTML='<span class="spinner"></span> Authenticating...';
+  clearAlert('admin-login-alert');
+  try{
+    const d=await apiFetch('/auth/login',{method:'POST',body:{phone,password:pwd}});
+    if(d.user?.role!=='admin'){
+      showAlert('admin-login-alert','Access denied. This portal is for admins only.','err');
+      $('admin-login-btn').disabled=false;
+      $('admin-login-btn').innerHTML='🔐 Admin Sign In';
+      return;
+    }
+    authToken=d.access_token;
+    userData=d.user;
+    localStorage.setItem('gs_token',authToken);
+    localStorage.setItem('gs_user',JSON.stringify(userData));
+    bootApp();
+  }catch(e){showAlert('admin-login-alert',e.message);}
+  finally{$('admin-login-btn').disabled=false;$('admin-login-btn').innerHTML='🔐 Admin Sign In';}
+}
+
+// ─── BOOT APP ───────────────────────────────────────────────────────────────
+function bootApp() {
+  if(!userData){$('portal-select-page').style.display='flex';$('app').style.display='none';return;}
+  $('portal-select-page').style.display='none';
+  $('login-page').style.display='none';
+  $('admin-login-page').style.display='none';
+  $('app').style.display='block';
+  $('user-name-pill').textContent=userData.name||'Worker';
+  if(userData.role==='admin')$('admin-tab').style.display='';
+  // Show chatbot FAB
+  document.getElementById('chatbot-fab').style.display='flex';
+  startRealtimeLocation();
+  loadDashboard();
+  loadClaims();
+  renderTriggerGrid();
+  prefillZoneFromUser();
+  if(userData.role==='admin')loadAdminData();
+}
+
+// ─── REAL-TIME GEOLOCATION ───────────────────────────────────────────────────
+function startRealtimeLocation(){
+  if(!navigator.geolocation){
+    $('loc-text').textContent='GPS unavailable';
+    return;
+  }
+  // Initial fast lookup
+  $('loc-dot').className='loc-dot loading';
+  $('loc-text').textContent='Locating...';
+  
+  const opts={enableHighAccuracy:true,timeout:12000,maximumAge:0};
+  
+  navigator.geolocation.getCurrentPosition(onGeoSuccess,onGeoError,opts);
+  // Continuous watch for real-time updates
+  geoWatchId=navigator.geolocation.watchPosition(onGeoSuccess,onGeoError,{
+    enableHighAccuracy:true,timeout:15000,maximumAge:5000
+  });
+}
+
+async function onGeoSuccess(pos){
+  const lat=pos.coords.latitude;
+  const lng=pos.coords.longitude;
+  const acc=pos.coords.accuracy;
+  liveCoords={lat,lng,accuracy:acc};
+
+  // Update topbar pill
+  $('loc-dot').className='loc-dot active';
+
+  // Reverse geocode using free Nominatim API
+  try{
+    const url=`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`;
+    const r=await fetch(url,{headers:{'Accept-Language':'en'}});
+    const gd=await r.json();
+    const addr=gd.address||{};
+    const area=addr.suburb||addr.quarter||addr.neighbourhood||addr.county||'';
+    const city=addr.city||addr.town||addr.village||addr.state_district||'';
+    const state=addr.state||'';
+    liveCoords.area=area;
+    liveCoords.city=city;
+    liveCoords.state=state;
+    const locStr=area?(area+(city?', '+city:'')):(city||'Location found');
+    $('loc-text').textContent=locStr;
+    $('map-coords').textContent=`${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+    $('map-city-label').textContent=locStr+(state?', '+state:'');
+    $('loc-accuracy').textContent=`Accuracy: ±${Math.round(acc)}m`;
+    // Prefill zone inputs
+    if(!$('zone-input').value) $('zone-input').value=area||city||'';
+    if(!$('city-input').value) $('city-input').value=city||userData?.city||'';
+    if(!$('claim-zone').value) $('claim-zone').value=area||city||'';
+    // Fetch real weather for this location
+    fetchRealWeather(lat,lng,city||area);
+  }catch{
+    $('loc-text').textContent=`${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    $('map-coords').textContent=`${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+    $('map-city-label').textContent=userData?.city||'';
+    $('loc-accuracy').textContent=`Accuracy: ±${Math.round(acc)}m`;
+    fetchRealWeather(lat,lng,userData?.city||'');
+  }
+}
+function onGeoError(err){
+  $('loc-dot').className='loc-dot';
+  const msgs={1:'Location permission denied',2:'Position unavailable',3:'Location timeout'};
+  $('loc-text').textContent=msgs[err.code]||'Location error';
+  $('map-coords').textContent='Enable GPS for real-time tracking';
+  // Fall back to user's registered city
+  if(userData?.city){
+    $('map-city-label').textContent=userData.city;
+    fetchWeatherByCity(userData.city);
+  }
+}
+function refreshLocation(){
+  $('loc-dot').className='loc-dot loading';
+  $('loc-text').textContent='Refreshing...';
+  if(geoWatchId){navigator.geolocation.clearWatch(geoWatchId);geoWatchId=null;}
+  startRealtimeLocation();
+}
+
+// ─── REAL-TIME WEATHER (Open-Meteo — FREE, no API key) ─────────────────────
+async function fetchRealWeather(lat,lng,locationName){
+  try{
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current_weather=true&hourly=precipitation,apparent_temperature,weathercode,windspeed_10m,uv_index,visibility&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Asia%2FKolkata&forecast_days=3`;
+    const r=await fetch(url);
+    const d=await r.json();
+    const cw=d.current_weather||{};
+    weatherCache={lat,lng,location:locationName,data:d};
+    renderWeatherWidget(cw,d,locationName);
+    checkWeatherTriggers(cw,d);
+  }catch(e){
+    $('weather-widget-area').innerHTML=`<div class="alert alert-warn">⚠️ Weather API unreachable. Using cached disruption data.</div>`;
+  }
+}
+async function fetchWeatherByCity(city){
+  // Get city coords via geocoding then fetch weather
+  try{
+    const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city+',India')}&format=json&limit=1`);
+    const d=await r.json();
+    if(d&&d[0]){
+      fetchRealWeather(parseFloat(d[0].lat),parseFloat(d[0].lon),city);
+    }
+  }catch{}
+}
+
+function wmCode(code){
+  if(code===0)return{icon:'☀️',desc:'Clear sky'};
+  if(code<=3)return{icon:'⛅',desc:'Partly cloudy'};
+  if(code<=48)return{icon:'🌫️',desc:'Foggy'};
+  if(code<=55)return{icon:'🌦',desc:'Light drizzle'};
+  if(code<=65)return{icon:'🌧',desc:'Rain'};
+  if(code<=67)return{icon:'🌨',desc:'Freezing rain'};
+  if(code<=77)return{icon:'❄️',desc:'Snow'};
+  if(code<=82)return{icon:'🌧',desc:'Heavy showers'};
+  if(code<=95)return{icon:'⛈️',desc:'Thunderstorm'};
+  return{icon:'🌩',desc:'Severe storm'};
+}
+
+function renderWeatherWidget(cw,full,loc){
+  const wm=wmCode(cw.weathercode||0);
+  const temp=Math.round(cw.temperature||0);
+  const wind=Math.round(cw.windspeed||0);
+  const h=full.hourly||{};
+  // Get current hour index
+  const now=new Date();
+  const hr=now.getHours();
+  const precip=h.precipitation?.[hr]??0;
+  const aqi_sim=Math.round(50+Math.random()*150); // simulated since open-meteo has no AQI on free tier
+  
+  $('weather-widget-area').innerHTML=`
+    <div class="weather-widget" style="margin-bottom:12px">
+      <div class="weather-icon">${wm.icon}</div>
+      <div>
+        <div class="weather-temp">${temp}°C</div>
+        <div class="weather-desc">${wm.desc}</div>
+        <div class="weather-meta">📍 ${loc} | 💨 ${wind} km/h | 🌧 ${precip.toFixed(1)}mm</div>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div style="font-size:12px;color:var(--text3)">AQI (est.)</div>
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:${aqi_sim>150?'var(--danger)':aqi_sim>100?'var(--warn)':'var(--accent3)'}">${aqi_sim}</div>
+        <div style="font-size:10px;color:var(--text3)">${aqi_sim>150?'HAZARDOUS':aqi_sim>100?'UNHEALTHY':'MODERATE'}</div>
+      </div>
+    </div>
+    ${renderForecastBars(full)}
+  `;
+  // Update risk forecast
+  updateRiskForecast(cw,full);
+}
+
+function renderForecastBars(full){
+  if(!full.daily)return'';
+  const wds=full.daily.weathercode||[];
+  const maxT=full.daily.temperature_2m_max||[];
+  const minT=full.daily.temperature_2m_min||[];
+  const precip=full.daily.precipitation_sum||[];
+  const days=['Today','Tomorrow','Day 3'];
+  return `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+    ${[0,1,2].map(i=>{
+      const w=wmCode(wds[i]||0);
+      return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">${days[i]}</div>
+        <div style="font-size:20px;margin:4px 0">${w.icon}</div>
+        <div style="font-size:12px;font-weight:600">${Math.round(maxT[i]||0)}° / ${Math.round(minT[i]||0)}°</div>
+        <div style="font-size:10px;color:var(--accent2)">${precip[i]?precip[i].toFixed(1)+'mm':''}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function checkWeatherTriggers(cw,full){
+  const h=full.hourly||{};
+  const hr=new Date().getHours();
+  const temp=cw.temperature||0;
+  const wind=cw.windspeed||0;
+  const precip=h.precipitation?.[hr]??0;
+  const wcode=cw.weathercode||0;
+  const triggers=[];
+  if(temp>40)triggers.push({type:'extreme_heat',val:temp,unit:'°C',label:'EXTREME HEAT'});
+  if(precip>10||wcode>=80)triggers.push({type:'heavy_rain',val:precip,unit:'mm/hr',label:'HEAVY RAIN'});
+  if(wind>60)triggers.push({type:'high_wind',val:wind,unit:'km/h',label:'HIGH WIND'});
+  if(wcode>=95)triggers.push({type:'thunderstorm',val:wcode,unit:'WMO',label:'STORM'});
+  updateTriggerGridFromWeather(triggers);
+}
+
+// ─── TRIGGER GRID ────────────────────────────────────────────────────────────
+const TRIGGERS_DEF=[
+  {id:'heavy_rain',icon:'🌧',name:'Heavy Rain',unit:'mm/hr',threshold:10,
+   desc:'Deliveries halted when rain >10mm/hr'},
+  {id:'extreme_heat',icon:'🌡',name:'Extreme Heat',unit:'°C',threshold:40,
+   desc:'Cannot work outdoors above 40°C'},
+  {id:'flood',icon:'🌊',name:'Flood Alert',unit:'level',threshold:1,
+   desc:'Zone flooded — no deliveries possible'},
+  {id:'severe_aqi',icon:'💨',name:'Severe AQI',unit:'AQI',threshold:300,
+   desc:'AQI >300 hazardous for outdoor workers'},
+  {id:'curfew',icon:'🚫',name:'Curfew/Strike',unit:'hrs',threshold:1,
+   desc:'Local curfew or bandh declared'},
+  {id:'app_outage',icon:'📵',name:'Platform Outage',unit:'%',threshold:50,
+   desc:'Zomato/Swiggy app down >50% in zone'},
+];
+
+function renderTriggerGrid(){
+  $('trigger-grid').innerHTML=TRIGGERS_DEF.map(t=>`
+    <div class="trigger-card" id="trig-${t.id}" onclick="selectTrigger('${t.id}')">
+      <div class="trigger-icon">${t.icon}</div>
+      <div class="trigger-name">${t.name}</div>
+      <div class="trigger-val">Threshold: ${t.threshold} ${t.unit}</div>
+      <div class="trigger-status" id="trig-status-${t.id}" style="color:var(--text3)">● Monitoring</div>
+    </div>
+  `).join('');
+}
+
+function updateTriggerGridFromWeather(activeTriggers){
+  activeTriggers.forEach(at=>{
+    const el=$(`trig-${at.type}`);
+    const st=$(`trig-status-${at.type}`);
+    if(el){el.classList.add('active-disruption');}
+    if(st){st.innerHTML=`<span style="color:var(--danger)">🔴 ACTIVE: ${at.val}${at.unit}</span>`;}
+  });
+}
+
+function selectTrigger(id){
+  $('claim-trigger').value=id;
+  showTab('claims');
+  const t=TRIGGERS_DEF.find(x=>x.id===id);
+  if(t){$('claim-tval').placeholder=`e.g. ${t.threshold+5} ${t.unit}`;}
+}
+
+// ─── DASHBOARD ───────────────────────────────────────────────────────────────
+async function loadDashboard(){
+  if(!userData?.id)return;
+  try{
+    const d=await apiFetch(`/dashboard/worker/${userData.id}`);
+    const w=d.worker||{};
+    const p=d.policy||{};
+    const s=d.stats||{};
+    $('dash-welcome').textContent=`Welcome back, ${w.name||'Worker'} 👋`;
+    $('dash-sub').textContent=`${w.platform||'—'} · ${w.zone||''}, ${w.city||''} · Avg ₹${w.avg_daily_income||0}/day`;
+    $('d-income').textContent=fmt(s.total_income_protected);
+    $('d-claims').textContent=s.total_claims||0;
+    $('d-claims-sub').textContent=`${s.approved_claims||0} approved`;
+    $('d-payout').textContent=p.active?fmt(p.max_payout):'₹—';
+    $('d-policy-tier').textContent=p.active?`${(p.tier||'').toUpperCase()} TIER`:'No active policy';
+    const risk=d.real_time_risk_score;
+    if(risk!=null){
+      $('d-risk').textContent=risk+'%';
+      $('d-risk-sub').textContent=risk>60?'⚠️ HIGH RISK':risk>30?'⚡ MODERATE':'✅ LOW RISK';
+    }
+    // Policy card
+    if(p.active){
+      $('dash-policy-detail').innerHTML=`
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div>
+            <div style="font-size:16px;font-weight:700;font-family:'Syne',sans-serif">${(p.tier||'').toUpperCase()} COVERAGE</div>
+            <div style="font-size:12px;color:var(--text3)">Valid until ${p.week_end||'—'}</div>
+          </div>
+          <span class="badge badge-green">ACTIVE</span>
+        </div>
+        <div style="display:flex;gap:16px">
+          <div><div style="font-size:11px;color:var(--text3)">WEEKLY PREMIUM</div><div style="font-weight:700">${fmt(p.ai_premium)}</div></div>
+          <div><div style="font-size:11px;color:var(--text3)">MAX PAYOUT</div><div style="font-weight:700;color:var(--accent3)">${fmt(p.max_payout)}</div></div>
+        </div>`;
+    }
+    // Risk forecast
+    if(d.risk_forecast){
+      renderDashRisk(d.risk_forecast,w.zone||'');
+    }
+    // Last disruption
+    if(d.last_disruption){
+      $('last-disruption-card').style.display='';
+      $('last-disruption-content').innerHTML=`
+        <div class="alert alert-warn">
+          <div>
+            <b>${(d.last_disruption.trigger_type||'').replace(/_/g,' ').toUpperCase()}</b> detected in 
+            <b>${d.last_disruption.zone||'your zone'}</b><br>
+            <span style="font-size:11px;font-family:'DM Mono',monospace">${d.last_disruption.checked_at||''}</span>
+          </div>
+        </div>`;
+    }
+    // GPS from server
+    if(d.latest_gps&&d.latest_gps.latitude&&!liveCoords){
+      $('map-coords').textContent=`${d.latest_gps.latitude.toFixed(5)}, ${d.latest_gps.longitude.toFixed(5)}`;
+      $('map-city-label').textContent=`${w.zone}, ${w.city}`;
+    }
+  }catch(e){showAlert('dash-alert',e.message);}
+}
+
+function renderDashRisk(rf,zone){
+  const rs=rf.risk_score||0;
+  const color=rs>60?'var(--danger)':rs>30?'var(--warn)':'var(--accent3)';
+  $('risk-forecast-area').innerHTML=`
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:13px">Zone Risk · <b>${zone}</b></span>
+          <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:${color}">${rs}%</span>
+        </div>
+        <div class="risk-bar-outer">
+          <div class="risk-bar-inner" style="width:${rs}%;background:${color}"></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:12px">
+      <div style="color:var(--text3)">Weather Risk: <b style="color:var(--text)">${rf.weather_risk||'—'}</b></div>
+      <div style="color:var(--text3)">Disruption Prob: <b style="color:var(--text)">${rf.disruption_probability||'—'}</b></div>
+      <div style="color:var(--text3)">Confidence: <b style="color:var(--text)">${rf.confidence||'—'}</b></div>
+    </div>
+    ${rf.alerts&&rf.alerts.length?`<div class="alert alert-warn" style="margin-top:10px">⚠️ ${rf.alerts.join(' · ')}</div>`:''}
+  `;
+}
+
+function updateRiskForecast(cw,full){
+  // Merge with dashboard risk if loaded
+  const h=full.hourly||{};
+  const hr=new Date().getHours();
+  const precip=h.precipitation?.[hr]??0;
+  const temp=cw.temperature||0;
+  let score=20;
+  if(precip>5)score+=20;if(precip>15)score+=20;
+  if(temp>38)score+=15;if(temp>42)score+=20;
+  if(cw.weathercode>=80)score+=25;
+  score=Math.min(score,95);
+  // Update the risk tile on dashboard
+  if(!$('d-risk').textContent||$('d-risk').textContent==='—'){
+    $('d-risk').textContent=score+'%';
+    const color=score>60?'⚠️ HIGH RISK':score>30?'⚡ MODERATE':'✅ LOW RISK';
+    $('d-risk-sub').textContent=color;
+  }
+}
+
+// ─── LOCATION → SERVER ───────────────────────────────────────────────────────
+async function pushLocationToServer(){
+  if(!liveCoords){showAlert('dash-alert','GPS not available yet','warn');return;}
+  try{
+    await apiFetch('/location/update',{method:'POST',body:{
+      latitude:liveCoords.lat,longitude:liveCoords.lng
+    }});
+    showAlert('dash-alert','✅ Location synced to server','ok');
+    setTimeout(()=>clearAlert('dash-alert'),3000);
+  }catch(e){showAlert('dash-alert','Location sync: '+e.message);}
+}
+
+// ─── POLICY ──────────────────────────────────────────────────────────────────
+function selectTier(tier,el){
+  selectedTier=tier;
+  document.querySelectorAll('.tier-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  clearAlert('premium-preview');
+  $('premium-preview').style.display='none';
+}
+
+async function calcPremium(){
+  if(!userData?.id)return;
+  try{
+    const d=await apiFetch(`/policy/calculate-premium?user_id=${userData.id}&tier=${selectedTier}`);
+    const p=d.pricing||{};
+    $('premium-preview').style.display='';
+    $('premium-preview').className='alert alert-info';
+    $('premium-preview').innerHTML=`
+      <div style="width:100%">
+        <b>AI Premium Calculation — ${selectedTier.toUpperCase()}</b><br>
+        Base: ${fmt(p.base_premium)} → AI Adjusted: <b>${fmt(p.ai_adjusted_premium)}</b>/week<br>
+        Max Payout: <b style="color:var(--accent3)">${fmt(p.max_payout)}</b> · 
+        Coverage: <b>${p.coverage_hours||0} hrs</b><br>
+        <span style="font-size:11px;color:var(--text3)">Saving vs. base: ${fmt((p.base_premium||0)-(p.ai_adjusted_premium||0))}</span>
+      </div>`;
+  }catch(e){showAlert('pol-alert',e.message);}
+}
+
+async function createPolicy(){
+  if(!userData?.id)return;
+  const upi=$('pol-upi').value.trim();
+  const pm=$('pol-payment').value;
+  if(!upi){showAlert('pol-alert','Enter your UPI ID','warn');return;}
+  try{
+    const d=await apiFetch('/policy/create',{method:'POST',body:{
+      user_id:userData.id,tier:selectedTier,payment_method:pm,upi_id:upi
+    }});
+    showAlert('pol-alert',`✅ Policy ${d.policy_id} activated! ${fmt(d.premium_paid)}/week. Valid till ${d.valid_until}. Razorpay ref: ${d.razorpay_sandbox_ref}`,'ok');
+    loadDashboard();
+    loadPolicyStatus();
+  }catch(e){showAlert('pol-alert',e.message);}
+}
+
+async function loadPolicyStatus(){
+  if(!userData?.id)return;
+  try{
+    const d=await apiFetch(`/policy/${userData.id}`);
+    $('policy-status-area').innerHTML=`
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+        <div><div style="font-size:11px;color:var(--text3)">POLICY ID</div><div style="font-family:'DM Mono',monospace;font-size:13px">${d.id}</div></div>
+        <div><div style="font-size:11px;color:var(--text3)">TIER</div><div style="font-weight:700">${(d.tier||'').toUpperCase()}</div></div>
+        <div><div style="font-size:11px;color:var(--text3)">PREMIUM/WK</div><div style="font-weight:700">${fmt(d.ai_premium)}</div></div>
+        <div><div style="font-size:11px;color:var(--text3)">MAX PAYOUT</div><div style="font-weight:700;color:var(--accent3)">${fmt(d.max_payout)}</div></div>
+        <div><div style="font-size:11px;color:var(--text3)">VALID TILL</div><div>${d.week_end||'—'}</div></div>
+        ${badge(d.status||'active')}
+      </div>`;
+    $('policy-create-area').style.display='none';
+  }catch{
+    $('policy-status-area').innerHTML=`<div class="alert alert-warn">No active policy this week.</div>`;
+    $('policy-create-area').style.display='';
+  }
+}
+
+// ─── ZONE CHECK ───────────────────────────────────────────────────────────────
+function prefillZoneFromUser(){
+  if(userData){
+    if(!$('zone-input').value)$('zone-input').value=userData.zone||'';
+    if(!$('city-input').value)$('city-input').value=userData.city||'';
+    if(!$('claim-zone').value)$('claim-zone').value=userData.zone||'';
+  }
+}
+
+async function checkZone(){
+  if(!userData?.id)return;
+  const zone=$('zone-input').value.trim();
+  const city=$('city-input').value.trim();
+  if(!zone){showAlert('trigger-alert','Enter a zone name','warn');return;}
+  clearAlert('trigger-alert');
+  try{
+    const d=await apiFetch('/monitor/check-zone',{method:'POST',body:{
+      user_id:userData.id,zone,city
+    }});
+    $('zone-result-card').style.display='';
+    const triggers=d.triggers_active||[];
+    const disrupted=d.disruption_detected;
+    $('zone-result-content').innerHTML=`
+      <div class="alert ${disrupted?'alert-err':'alert-ok'}" style="margin-bottom:12px">
+        ${disrupted?'⚠️ DISRUPTION DETECTED — Auto-claim may be initiated':'✅ No disruptions in this zone right now'}
+      </div>
+      ${triggers.map(t=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <span style="color:var(--danger);font-size:18px">🔴</span>
+          <div>
+            <div style="font-weight:600">${(t.type||t).replace(/_/g,' ').toUpperCase()}</div>
+            <div style="font-size:12px;color:var(--text3)">${t.value!=null?'Value: '+t.value+' '+t.unit:'Trigger active'}</div>
+          </div>
+        </div>`).join('')}
+      ${!triggers.length?'<div style="color:var(--text3);font-size:13px">All triggers within safe thresholds.</div>':''}
+    `;
+  }catch(e){showAlert('trigger-alert',e.message);}
+}
+
+// ─── CLAIMS ──────────────────────────────────────────────────────────────────
+async function fileClaim(){
+  if(!userData?.id)return;
+  const trigger=$('claim-trigger').value;
+  const tval=parseFloat($('claim-tval').value);
+  const hours=parseFloat($('claim-hours').value)||4;
+  const zone=$('claim-zone').value.trim()||userData?.zone||'default';
+  if(!tval){showAlert('claim-alert','Enter trigger value','warn');return;}
+  // Get active policy
+  let policyId;
+  try{
+    const pol=await apiFetch(`/policy/${userData.id}`);
+    policyId=pol.id;
+  }catch{showAlert('claim-alert','You need an active policy to file a claim','warn');return;}
+  clearAlert('claim-alert');
+  try{
+    const d=await apiFetch('/claims/initiate',{method:'POST',body:{
+      user_id:userData.id,policy_id:policyId,
+      trigger_type:trigger,trigger_value:tval,
+      disruption_hours:hours,zone
+    }});
+    if(d.status==='blocked'){
+      showAlert('claim-alert',`🚫 Claim blocked: ${d.reason||'Fraud prevention'}. Score: ${d.fraud_score}`,'err');
+      return;
+    }
+    showAlert('claim-alert',
+      `✅ Claim ${d.claim_id} ${d.status.toUpperCase()}! Payout: ${fmt(d.payout_amount)} → UPI. Fraud Score: ${(d.fraud_score||0).toFixed(2)} (${d.fraud_verdict})`,'ok');
+    renderClaimTimeline(d);
+    loadClaims();
+    loadDashboard();
+  }catch(e){showAlert('claim-alert',e.message);}
+}
+
+function renderClaimTimeline(d){
+  $('claim-timeline-card').style.display='';
+  const isApproved=d.status==='approved';
+  $('claim-timeline').innerHTML=`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div class="fraud-ring ${d.fraud_score<0.4?'low':d.fraud_score<0.7?'med':'high'}">${((d.fraud_score||0)*100).toFixed(0)}</div>
+      <div>
+        <div style="font-size:13px;font-weight:600">Fraud Score: ${(d.fraud_score||0).toFixed(3)}</div>
+        <div style="font-size:12px;color:var(--text3)">${d.fraud_verdict||''}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">
+          GPS: ${d.gps_match?'✅ Match':'⚠️ Unverified'} · 
+          Duplicate: ${d.repeated_claim_flag?'🔴 Yes':'✅ No'}
+        </div>
+      </div>
+      <div style="margin-left:auto">${badge(d.status)}</div>
+    </div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot done">✓</div><div class="tl-content"><div class="tl-title">Claim Submitted</div><div class="tl-time">Just now · ${d.claim_id}</div></div></div>
+      <div class="tl-item"><div class="tl-dot done">✓</div><div class="tl-content"><div class="tl-title">AI Fraud Check Passed</div><div class="tl-time">Score: ${(d.fraud_score||0).toFixed(3)}</div></div></div>
+      <div class="tl-item"><div class="tl-dot ${isApproved?'done':'active'}">${isApproved?'✓':'●'}</div><div class="tl-content"><div class="tl-title">Parametric Assessment</div><div class="tl-time">${badge(d.status)}</div></div></div>
+      ${isApproved?`<div class="tl-item payout-flash"><div class="tl-dot done">💸</div><div class="tl-content"><div class="tl-title">Payout Initiated</div><div class="tl-time">${fmt(d.payout_amount)} → UPI · Ref: ${d.payout_ref||'—'}</div></div></div>`:''}
+    </div>`;
+}
+
+async function loadClaims(){
+  if(!userData?.id)return;
+  try{
+    const d=await apiFetch(`/claims/${userData.id}`);
+    if(!d.claims||!d.claims.length){
+      $('claims-list').innerHTML=`<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px">No claims yet. Claims are auto-initiated during disruptions.</div>`;
+      return;
+    }
+    $('claims-list').innerHTML=`
+      <div class="scroll-table">
+        <table class="data-table">
+          <thead><tr><th>ID</th><th>Trigger</th><th>Zone</th><th>Hours</th><th>Fraud</th><th>Payout</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody>
+            ${d.claims.map(c=>`
+              <tr>
+                <td style="font-family:'DM Mono',monospace;font-size:11px">${c.id.slice(-8)}</td>
+                <td><span class="badge badge-blue">${(c.trigger_type||'').replace(/_/g,' ')}</span></td>
+                <td>${c.trigger_zone||'—'}</td>
+                <td>${c.disruption_hours||0}h</td>
+                <td>
+                  <span style="color:${(c.fraud_score||0)<0.4?'var(--accent3)':(c.fraud_score||0)<0.7?'var(--warn)':'var(--danger)'}">
+                    ${((c.fraud_score||0)*100).toFixed(0)}%
+                  </span>
+                  ${c.gps_mismatch_flag?'<span class="badge badge-yellow" style="margin-left:4px">GPS⚠</span>':''}
+                </td>
+                <td style="font-weight:600">${fmt(c.payout_amount)}</td>
+                <td>${badge(c.status)}</td>
+                <td style="font-size:11px;font-family:'DM Mono',monospace">${c.created_at||'—'}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }catch(e){$('claims-list').innerHTML=`<div class="alert alert-err">${e.message}</div>`;}
+}
+
+// ─── ADMIN ────────────────────────────────────────────────────────────────────
+async function loadAdminData(){
+  try{
+    const [analytics,claims,workers]=await Promise.all([
+      apiFetch('/admin/analytics'),
+      apiFetch('/admin/claims'),
+      apiFetch('/admin/users'),
+    ]);
+    $('a-workers').textContent=analytics.total_workers||workers.total||0;
+    $('a-policies').textContent=analytics.active_policies||0;
+    $('a-claims').textContent=analytics.total_claims||claims.total||0;
+    $('a-payouts').textContent=fmt(analytics.total_payouts_amount||0);
+    $('a-fraud').textContent=analytics.fraud_blocked||0;
+    $('a-ratio').textContent=analytics.loss_ratio?((analytics.loss_ratio)*100).toFixed(1)+'%':'—';
+    
+    // Claims table
+    $('admin-claims-body').innerHTML=(claims.claims||[]).map(c=>`
+      <tr>
+        <td>${c.worker||'—'}</td>
+        <td><span class="badge badge-blue">${(c.trigger_type||'').replace(/_/g,' ')}</span></td>
+        <td>${c.trigger_zone||'—'}</td>
+        <td>${c.disruption_hours||0}h</td>
+        <td style="color:${(c.fraud_score||0)<0.4?'var(--accent3)':(c.fraud_score||0)<0.7?'var(--warn)':'var(--danger)'}">
+          ${((c.fraud_score||0)*100).toFixed(0)}%
+          ${c.gps_mismatch_flag?'🛰':''}
+          ${c.repeated_claim_flag?'🔄':''}
+        </td>
+        <td style="font-weight:600">${fmt(c.payout_amount)}</td>
+        <td>${badge(c.status)}</td>
+        <td style="font-size:11px;font-family:'DM Mono',monospace">${c.created_at||'—'}</td>
+      </tr>`).join('')||'<tr><td colspan="8" style="text-align:center;color:var(--text3)">No claims yet</td></tr>';
+    
+    // Workers table
+    $('admin-workers-body').innerHTML=(workers.users||[]).map(u=>`
+      <tr>
+        <td style="font-family:'DM Mono',monospace">${u.id}</td>
+        <td>${u.name}</td>
+        <td style="font-family:'DM Mono',monospace">${u.phone}</td>
+        <td><span class="badge badge-blue">${u.platform||'—'}</span></td>
+        <td>${u.city||'—'}</td>
+        <td>${u.zone||'—'}</td>
+        <td>${fmt(u.avg_daily_income)}</td>
+      </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--text3)">No workers</td></tr>';
+  }catch(e){console.error('Admin load error:',e);}
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+function showTab(tab){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(n=>n.classList.remove('active'));
+  $('tab-'+tab).classList.add('active');
+  document.querySelector(`[data-tab="${tab}"]`)?.classList.add('active');
+  // Lazy load
+  if(tab==='policy')loadPolicyStatus();
+  if(tab==='admin'&&userData?.role==='admin')loadAdminData();
+  if(tab==='claims')loadClaims();
+  if(tab==='monitor'&&!weatherCache&&liveCoords){
+    fetchRealWeather(liveCoords.lat,liveCoords.lng,liveCoords.city||'');
+  }else if(tab==='monitor'&&!weatherCache&&userData?.city){
+    fetchWeatherByCity(userData.city);
+  }
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+(function init(){
+  if(authToken&&userData){
+    bootApp();
+  } else {
+    $('portal-select-page').style.display='flex';
+    $('login-page').style.display='none';
+    $('admin-login-page').style.display='none';
+    $('app').style.display='none';
+  }
+})();
+</script>
+</body>
+</html>
