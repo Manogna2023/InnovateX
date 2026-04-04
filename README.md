@@ -168,6 +168,87 @@ WebSocket
 
 ---
 
-## 👥 Team InnovateX
+## 🚀 GigShield AI – Phase 2 (Enhanced Prototype)
 
-Built for **Guidewire DEVTrails 2026** University Hackathon.
+### 🔗 Live Prototype (Frontend Only)
+
+👉 https://manogna2023.github.io/InnovateX/
+
+---
+
+### 🎥 Full Working Demo (Frontend + Backend)
+
+👉 [https://drive.google.com/file/d/1K0761bi16WTE45elfkq8_au-H_4zynB1/view?usp=sharing]
+
+---
+
+### ⚠️ Note
+
+The backend for Phase 2 is built using FastAPI and runs locally.
+Due to time constraints, the backend is not deployed online.
+However, a full working demo is provided above, and steps to run locally are given below.
+
+---
+
+## 🛠️ How to Run the Project Locally
+
+Follow these steps to run the backend on your system:
+
+### Step 1: Extract the Project
+
+Download the ZIP file and extract it to your desired location.
+
+---
+
+### Step 2: Navigate to Project Folder
+
+Open Terminal / Command Prompt and go to the project directory:
+
+cd path/to/gigshield_phase2_complete
+
+---
+
+### Step 3: Install Dependencies
+
+Make sure Python is installed, then run:
+
+pip install -r requirements.txt
+
+---
+
+### Step 4: Run the Backend Server
+
+Start the FastAPI server using:
+
+uvicorn app.main:app --reload --port 8000
+
+---
+
+### Step 5: Open in Browser
+
+Go to:
+
+http://localhost:8000
+
+---
+
+###  Additional Notes
+
+* Ensure Python and pip are installed on your system
+* If uvicorn is not recognized, run:
+  pip install uvicorn
+* Make sure port 8000 is available
+
+---
+
+##  Tech Stack
+
+* Frontend: HTML, CSS, JavaScript
+* Backend: FastAPI (Python)
+* Deployment (Frontend): GitHub Pages
+
+---
+
+##  Team InnovateX
+
+Guidewire DEVTrails Hackathon 2026
