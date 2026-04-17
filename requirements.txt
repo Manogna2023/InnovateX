@@ -14,9 +14,7 @@ python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 
 # Config management
-#pydantic==2.7.4
-pydantic==2.6.4
-pydantic-core==2.16.3
+pydantic==2.7.4
 pydantic-settings==2.3.4
 
 # Rate limiting
@@ -31,4 +29,4 @@ python-multipart==0.0.9
 # WebSockets
 websockets==12.0
 
-setuptools<70
+
