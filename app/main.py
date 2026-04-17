@@ -14,7 +14,7 @@ from slowapi.middleware import SlowAPIMiddleware
 
 from app.core.config import get_settings
 from app.core.limiter import limiter
-#from app.models import models  # noqa: F401 — register ORM mappers
+from app.models import models  # noqa: F401 — register ORM mappers
 from app.models.database import Base, SessionLocal, engine
 from app.routes import (
     admin,
@@ -37,16 +37,16 @@ from app.services.websocket_manager import ws_manager
 async def lifespan(app: FastAPI):
     loop = asyncio.get_running_loop()
     ws_manager.set_event_loop(loop)
-    #Base.metadata.create_all(bind=engine)
-    #db = SessionLocal()
-    #try:
-     #   seed_data(db)
-    #finally:
-    #    db.close()
+    Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+    try:
+        seed_data(db)
+    finally:
+        db.close()
     settings = get_settings()
-    #start_scheduler(interval_minutes=settings.MONITOR_INTERVAL_MINUTES)
+    start_scheduler(interval_minutes=settings.MONITOR_INTERVAL_MINUTES)
     yield
-    #shutdown_scheduler()
+    shutdown_scheduler()
 
 
 def create_app() -> FastAPI:
@@ -72,15 +72,15 @@ def create_app() -> FastAPI:
     )
 
     application.include_router(health.router)
-    #application.include_router(frontend.router)
-    #application.include_router(auth.router)
-    #application.include_router(policy.router)
-    #application.include_router(monitor.router)
-    #application.include_router(claims.router)
-    #application.include_router(location.router)
-    #application.include_router(admin.router)
-    #application.include_router(dashboard.router)
-    #application.include_router(websocket_routes.router)
+    application.include_router(frontend.router)
+    application.include_router(auth.router)
+    application.include_router(policy.router)
+    application.include_router(monitor.router)
+    application.include_router(claims.router)
+    application.include_router(location.router)
+    application.include_router(admin.router)
+    application.include_router(dashboard.router)
+    application.include_router(websocket_routes.router)
     return application
 
 
