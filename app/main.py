@@ -37,16 +37,16 @@ from app.services.websocket_manager import ws_manager
 async def lifespan(app: FastAPI):
     loop = asyncio.get_running_loop()
     ws_manager.set_event_loop(loop)
-    Base.metadata.create_all(bind=engine)
-    db = SessionLocal()
-    try:
-        seed_data(db)
-    finally:
-        db.close()
+    #Base.metadata.create_all(bind=engine)
+    #db = SessionLocal()
+    #try:
+     #   seed_data(db)
+    #finally:
+    #    db.close()
     settings = get_settings()
-    start_scheduler(interval_minutes=settings.MONITOR_INTERVAL_MINUTES)
+    #start_scheduler(interval_minutes=settings.MONITOR_INTERVAL_MINUTES)
     yield
-    shutdown_scheduler()
+    #shutdown_scheduler()
 
 
 def create_app() -> FastAPI:
