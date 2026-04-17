@@ -1,33 +1,15 @@
-# GigShield AI — Phase 2 Dependencies
-# Install with: pip install -r requirements.txt
-
-# Web framework
 fastapi==0.111.1
-uvicorn[standard]==0.30.1
+uvicorn==0.30.1
 
-# Database
 sqlalchemy==2.0.30
-#psycopg2-binary==2.9.9   # PostgreSQL driver (remove if using SQLite only)
 
-# Auth & Security
 python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
+passlib==1.7.4
+bcrypt==4.0.1
 
-# Config management
-#pydantic==2.7.4
-#pydantic-settings==2.3.4
 pydantic==1.10.13
 
-# Rate limiting
 slowapi==0.1.9
-
-# HTTP client (for trigger_service → Open-Meteo API)
 httpx==0.27.0
-
-# Python multipart (for form data)
 python-multipart==0.0.9
-
-# WebSockets
 websockets==12.0
-
-
