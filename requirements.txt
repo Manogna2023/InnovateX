@@ -7,7 +7,7 @@ uvicorn[standard]==0.30.1
 
 # Database
 sqlalchemy==2.0.30
-psycopg2-binary==2.9.9   # PostgreSQL driver (remove if using SQLite only)
+#psycopg2-binary==2.9.9   # PostgreSQL driver (remove if using SQLite only)
 
 # Auth & Security
 python-jose[cryptography]==3.3.0
